@@ -1,0 +1,33 @@
+{
+    "manifestVersion": 1,
+    "id": "liquidefile-build-release-task",
+    "name": "LiquidFile Build and Release Uploader tool",
+    "version": "1.0.1",
+    "publisher": "AviHadad",
+    "targets": [{
+        "id": "Microsoft.VisualStudio.Services"
+    }],
+    "description": "Tools for building releasing with LiquidFile. Includes one build release task.",
+    "categories": [
+        "Azure Pipelines"
+    ],
+    "tags": [
+        "Azure Pipelines"
+    ],
+    "icons": {
+        "default": "images/icon.png"
+    },
+    "files": [{
+        "path": "buildAndReleaseTask"
+    }],
+    "contributions": [{
+        "id": "custom-build-release-task",
+        "type": "ms.vss-distributed-task.task",
+        "targets": [
+            "ms.vss-distributed-task.tasks"
+        ],
+        "properties": {
+            "name": "buildAndReleaseTask"
+        }
+    }]
+}
