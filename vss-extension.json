@@ -2,7 +2,7 @@
     "manifestVersion": 1,
     "id": "liquidefile-build-release-task",
     "name": "LiquidFile Build and Release Uploader tool",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "publisher": "AviHadad",
     "public": true,
     "targets": [{
@@ -20,7 +20,21 @@
     },
     "repository": {
         "type": "git",
-        "uri": "https://github.com/jessehouwing/azure-pipelines-gate-condition-editor.git"
+        "uri": "https://github.com/avih75/LiquidFileUploader.git"
+    },
+    "links": {
+        "getstarted": {
+            "uri": "https://github.com/avih75/LiquidFileUploader/wiki"
+        },
+        "support": {
+            "uri": "https://github.com/avih75/LiquidFileUploader/issues"
+        },
+        "license": {
+            "uri": "https://github.com/avih75/LiquidFileUploader/LICENSE.md"
+        },
+        "privacypolicy": {
+            "uri": "https://github.com/avih75/LiquidFileUploader/blob/main/PRIVACY.md"
+        }
     },
     "files": [{
         "path": "buildAndReleaseTask"

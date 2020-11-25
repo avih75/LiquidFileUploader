@@ -78,24 +78,21 @@ export class LiquidFileUploader {
         }
         else {
             console.log('Privacy selected: ', this.InputPrivat);
-            this.InputPrivat = this.InputPrivat[0];
         }
         console.log('Auth selected: ', this.InputAuth);
         //this.GetList();
         return flag;
     }
     UploadTheFiles() {
-        let flag: boolean = true;
-        let message: string = "";
         console.log("Look in to: " + this.InputFolder + " folder");
         fs.readdir(this.InputFolder, (err: any, filenames: string[]) => {
-            console.log("fonded: " + filenames);
-            if (filenames)
+            if (filenames) {
+                console.log("fonded: " + filenames);
                 this.PostFiles(filenames);
-            else {
-                flag = false;
-                message += "empty folder \n";
             }
+            else {
+                this.FailMessage += "empty folder \n";
+            } 
         });
     }
     PostFiles(filenames: string[]) {
@@ -164,17 +161,18 @@ export class LiquidFileUploader {
                     body: JSON.stringify({ "message": data.message })
                 };
                 request(options, function (error, resp) {
-                    if (error) throw new Error(error);
+                    if (error) {throw new Error(error);}
                     else
                         console.log("respone off Mail: " + resp.body);
                 });
             });
         } catch (err) {
+            this.FailMessage+="faile to upload \n";
             console.log("error: " + err);
         }
 
     }
-    GetList() {
+    GetList() { // get list of all pools and files in cluded - in case we need to get files
         console.log(this.InputUrl + "/admin/pools" + " token: " + this.InputToken);
         const options = {
             'url': this.InputUrl + "/admin/pools",

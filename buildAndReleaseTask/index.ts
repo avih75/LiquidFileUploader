@@ -8,14 +8,17 @@ async function run() {
         );
         let flag: boolean = LiquidUploader.Test();
         if (flag) {
-            console.log('Start Script')
+            console.log("");
+            console.log('****************');
+            console.log('* Start Script *');
+            console.log('****************');
+            console.log("");
             LiquidUploader.UploadTheFiles();
         }
         else {
             tl.setResult(tl.TaskResult.Failed, LiquidUploader.FailMessage);
             console.log('bad inputs', LiquidUploader.FailMessage);
         }
-
     }
     catch (err) {
         tl.setResult(tl.TaskResult.Failed, err.message);

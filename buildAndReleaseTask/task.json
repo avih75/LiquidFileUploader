@@ -48,11 +48,11 @@
             "label": "permmision to download",
             "required": true,
             "helpMarkDown": "appliese permmision dowload parameter to your liquidefile server",
-            "defaultValue": "Public",
+            "defaultValue": "0",
             "options": {
-                "Public": "0",
-                "Private": "1",
-                "Organisation": "3"
+                "0": "Public",
+                "1": "Private",
+                "2": "Organisation"
             },
             "groupName": "Client"
         }, {
