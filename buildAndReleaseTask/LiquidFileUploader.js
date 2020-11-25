@@ -6,7 +6,7 @@ const request = require("request");
 class LiquidFileUploader {
     constructor(inputUrl, inputToken, inputDays, inputFolder, inputPrivat, inputPool, inputEmails, inputAuth) {
         this.InputUrl = inputUrl || "";
-        this.InputToken = inputToken || "";
+        this.InputToken = "Basic " + inputToken || "";
         this.InputDays = inputDays || "";
         this.InputFolder = inputFolder || "";
         this.InputAuth = inputAuth || false;

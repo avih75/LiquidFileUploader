@@ -6,7 +6,7 @@ export class LiquidFileUploader {
     private readonly InputUrl: string;
     private readonly InputToken: string;
     private readonly InputEmails: string;
-    private InputAuth: boolean;
+    private readonly InputAuth: boolean;
     private InputPrivat: string;
     private InputDays: string;
     private InputFolder: string;
@@ -15,9 +15,9 @@ export class LiquidFileUploader {
     constructor(inputUrl: string | undefined, inputToken: string | undefined, inputDays: string | undefined, inputFolder: string | undefined,
         inputPrivat: string | undefined, inputPool: string | undefined, inputEmails: string | undefined, inputAuth: boolean) {
         this.InputUrl = inputUrl || "";
-        this.InputToken = inputToken || "";
+        this.InputToken = "Basic " + inputToken || "";
         this.InputDays = inputDays || "";
-        this.InputFolder = inputFolder || "";
+        this.InputFolder = inputFolder || ""; 
         this.InputAuth = inputAuth || false;
         this.InputPrivat = inputPrivat || "";
         this.InputPool = inputPool || "";
@@ -92,7 +92,7 @@ export class LiquidFileUploader {
             }
             else {
                 this.FailMessage += "empty folder \n";
-            } 
+            }
         });
     }
     PostFiles(filenames: string[]) {
@@ -161,13 +161,13 @@ export class LiquidFileUploader {
                     body: JSON.stringify({ "message": data.message })
                 };
                 request(options, function (error, resp) {
-                    if (error) {throw new Error(error);}
+                    if (error) { throw new Error(error); }
                     else
                         console.log("respone off Mail: " + resp.body);
                 });
             });
         } catch (err) {
-            this.FailMessage+="faile to upload \n";
+            this.FailMessage += "faile to upload \n";
             console.log("error: " + err);
         }
 

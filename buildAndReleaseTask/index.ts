@@ -4,7 +4,7 @@ import { LiquidFileUploader } from './LiquidFileUploader';
 async function run() {
     try {
         let LiquidUploader: LiquidFileUploader = new LiquidFileUploader(tl.getInput('url', true), tl.getInput('token', true), tl.getInput('days', true),
-            tl.getInput('folder', true), tl.getInput('private', true), tl.getInput('pool', true), tl.getInput('emails', true), tl.getBoolInput("useTasklib")
+            tl.getInput('folder', true), tl.getInput('private', true), tl.getInput('pool', true), tl.getInput('emails', true), tl.getBoolInput("auth",true)
         );
         let flag: boolean = LiquidUploader.Test();
         if (flag) {

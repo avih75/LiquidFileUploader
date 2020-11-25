@@ -2,7 +2,7 @@
     "manifestVersion": 1,
     "id": "liquidefile-build-release-task",
     "name": "LiquidFile Build and Release Uploader tool",
-    "version": "1.0.4",
+    "version": "1.0.6",
     "publisher": "AviHadad",
     "public": true,
     "targets": [{

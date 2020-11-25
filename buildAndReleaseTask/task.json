@@ -21,7 +21,7 @@
         },
         {
             "name": "Cofiguration",
-            "displayName": "Liquid server",
+            "displayName": "Upload Cofiguration",
             "isExpanded": false
         },
         {
@@ -44,7 +44,7 @@
         "label": "your token",
         "defaultValue": "",
         "required": true,
-        "helpMarkDown": "a token for your liquidefile server - use a secret",
+        "helpMarkDown": "a base64 token for your liquidefile server - use a secret",
         "groupName": "Server"
     }, {
         "name": "days",
