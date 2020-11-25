@@ -69,23 +69,20 @@ class LiquidFileUploader {
         }
         else {
             console.log('Privacy selected: ', this.InputPrivat);
-            this.InputPrivat = this.InputPrivat[0];
         }
         console.log('Auth selected: ', this.InputAuth);
         //this.GetList();
         return flag;
     }
     UploadTheFiles() {
-        let flag = true;
-        let message = "";
         console.log("Look in to: " + this.InputFolder + " folder");
         fs.readdir(this.InputFolder, (err, filenames) => {
-            console.log("fonded: " + filenames);
-            if (filenames)
+            if (filenames) {
+                console.log("fonded: " + filenames);
                 this.PostFiles(filenames);
+            }
             else {
-                flag = false;
-                message += "empty folder \n";
+                this.FailMessage += "empty folder \n";
             }
         });
     }
@@ -155,14 +152,16 @@ class LiquidFileUploader {
                     body: JSON.stringify({ "message": data.message })
                 };
                 request(options, function (error, resp) {
-                    if (error)
+                    if (error) {
                         throw new Error(error);
+                    }
                     else
                         console.log("respone off Mail: " + resp.body);
                 });
             });
         }
         catch (err) {
+            this.FailMessage += "faile to upload \n";
             console.log("error: " + err);
         }
     }

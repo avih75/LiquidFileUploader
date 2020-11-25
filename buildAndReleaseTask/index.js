@@ -17,7 +17,11 @@ function run() {
             let LiquidUploader = new LiquidFileUploader_1.LiquidFileUploader(tl.getInput('url', true), tl.getInput('token', true), tl.getInput('days', true), tl.getInput('folder', true), tl.getInput('private', true), tl.getInput('pool', true), tl.getInput('emails', true), tl.getBoolInput("useTasklib"));
             let flag = LiquidUploader.Test();
             if (flag) {
-                console.log('Start Script');
+                console.log("");
+                console.log('****************');
+                console.log('* Start Script *');
+                console.log('****************');
+                console.log("");
                 LiquidUploader.UploadTheFiles();
             }
             else {
