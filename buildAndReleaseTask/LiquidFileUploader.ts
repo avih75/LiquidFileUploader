@@ -1,27 +1,27 @@
 import fs = require("fs");
-import request = require("request"); 
+import request = require("request");
 
 export class LiquidFileUploader {
     private readonly InputPool: string;
     private readonly InputUrl: string;
     private readonly InputToken: string;
     private readonly InputEmails: string;
-    //private InputAuth: string;
+    private InputAuth: boolean;
     private InputPrivat: string;
     private InputDays: string;
     private InputFolder: string;
     public FailMessage: string;
 
     constructor(inputUrl: string | undefined, inputToken: string | undefined, inputDays: string | undefined, inputFolder: string | undefined,
-          inputPrivat: string | undefined, inputPool: string | undefined, inputEmails: string | undefined,) {
-        this.InputUrl = inputUrl ? inputUrl : "";
-        this.InputToken = inputToken ? inputToken : "";
-        this.InputDays = inputDays ? inputDays : "";
-        this.InputFolder = inputFolder ? inputFolder : "";
-        //this.InputAuth = inputAuth ? inputAuth : "";
-        this.InputPrivat = inputPrivat ? inputPrivat : "";
-        this.InputPool = inputPool ? inputPool : "";
-        this.InputEmails = inputEmails ? inputEmails : "";
+        inputPrivat: string | undefined, inputPool: string | undefined, inputEmails: string | undefined, inputAuth: boolean) {
+        this.InputUrl = inputUrl || "";
+        this.InputToken = inputToken || "";
+        this.InputDays = inputDays || "";
+        this.InputFolder = inputFolder || "";
+        this.InputAuth = inputAuth || false;
+        this.InputPrivat = inputPrivat || "";
+        this.InputPool = inputPool || "";
+        this.InputEmails = inputEmails || "";
         this.FailMessage = "";
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
     }
@@ -77,9 +77,10 @@ export class LiquidFileUploader {
             flag = false;
         }
         else {
-            console.log('Auth selected: ', this.InputPrivat);
-            this.InputPrivat=this.InputPrivat[0];
+            console.log('Privacy selected: ', this.InputPrivat);
+            this.InputPrivat = this.InputPrivat[0];
         }
+        console.log('Auth selected: ', this.InputAuth);
         //this.GetList();
         return flag;
     }
@@ -105,16 +106,16 @@ export class LiquidFileUploader {
         let pool = this.InputPool;
         let days = this.InputDays;
         let email = this.InputEmails;
-        let auth = this.InputPrivat;
+        let privFile = this.InputPrivat;
         filenames.forEach(function (fileName: string) {
             console.log("work on file: " + fileName);
             let fileBuffer: Buffer = Buffer.from(folder + fileName);
             console.log("try upload");
-            PostFile(fileBuffer, fileName, url, token, pool, email, +days,auth);
+            PostFile(fileBuffer, fileName, url, token, pool, email, +days, privFile);
             console.log("file uploaded");
         });
     }
-    PostTheFile(fileBuffer: Buffer, fileName: string, url: string, token: string, pool: string, email: string, days: number,auth:String) {
+    PostTheFile(fileBuffer: Buffer, fileName: string, url: string, token: string, pool: string, email: string, days: number, privFile: String) {
         console.log("try post file " + fileName + " to: " + url + " pool: " + pool + " token: " + token);
         try {
             const options = {
@@ -149,7 +150,7 @@ export class LiquidFileUploader {
                         "message": "This file sended by Auto API",
                         "expires_at": expireDate,
                         "send_email": true,
-                        "authorization": auth,
+                        "authorization": privFile,
                         "attachments": [response.body]
                     }
                 };

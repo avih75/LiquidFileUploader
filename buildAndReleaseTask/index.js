@@ -14,7 +14,7 @@ const LiquidFileUploader_1 = require("./LiquidFileUploader");
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            let LiquidUploader = new LiquidFileUploader_1.LiquidFileUploader(tl.getInput('url', true), tl.getInput('token', true), tl.getInput('days', true), tl.getInput('folder', true), tl.getInput('private', true), tl.getInput('pool', true), tl.getInput('emails', true));
+            let LiquidUploader = new LiquidFileUploader_1.LiquidFileUploader(tl.getInput('url', true), tl.getInput('token', true), tl.getInput('days', true), tl.getInput('folder', true), tl.getInput('private', true), tl.getInput('pool', true), tl.getInput('emails', true), tl.getBoolInput("useTasklib"));
             let flag = LiquidUploader.Test();
             if (flag) {
                 console.log('Start Script');

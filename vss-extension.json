@@ -2,8 +2,9 @@
     "manifestVersion": 1,
     "id": "liquidefile-build-release-task",
     "name": "LiquidFile Build and Release Uploader tool",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "publisher": "AviHadad",
+    "public": true,
     "targets": [{
         "id": "Microsoft.VisualStudio.Services"
     }],
@@ -17,9 +18,24 @@
     "icons": {
         "default": "images/icon.png"
     },
+    "repository": {
+        "type": "git",
+        "uri": "https://github.com/jessehouwing/azure-pipelines-gate-condition-editor.git"
+    },
     "files": [{
         "path": "buildAndReleaseTask"
     }],
+    "content": {
+        "details": {
+            "path": "README.md"
+        },
+        "license": {
+            "path": "LICENSE.md"
+        },
+        "privacy": {
+            "path": "PRIVACY.md"
+        }
+    },
     "contributions": [{
         "id": "custom-build-release-task",
         "type": "ms.vss-distributed-task.task",
