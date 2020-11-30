@@ -17,7 +17,7 @@
     "groups": [{
             "name": "Server",
             "displayName": "Liquid server",
-            "isExpanded": true
+            "isExpanded": false
         },
         {
             "name": "Cofiguration",
@@ -88,8 +88,32 @@
         "type": "string",
         "label": "client emails",
         "defaultValue": "",
-        "required": true,
-        "helpMarkDown": "emails list witch the server send the download links to",
+        "required": false,
+        "helpMarkDown": "email witch the server send the download links to",
+        "groupName": "Client"
+    }, {
+        "name": "email",
+        "type": "string",
+        "label": "client email",
+        "defaultValue": "",
+        "required": false,
+        "helpMarkDown": "email witch the server send the download links to",
+        "groupName": "Client"
+    }, {
+        "name": "subject",
+        "type": "string",
+        "label": "email subject",
+        "defaultValue": "",
+        "required": false,
+        "helpMarkDown": "email subject",
+        "groupName": "Client"
+    }, {
+        "name": "body",
+        "type": "string",
+        "label": "email body",
+        "defaultValue": "",
+        "required": false,
+        "helpMarkDown": "email body",
         "groupName": "Client"
     }, {
         "name": "auth",
