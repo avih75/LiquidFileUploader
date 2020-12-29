@@ -4,20 +4,25 @@
 
 Uploading Folder files to your company LiquidFile server.
 
-* upload in selected pool
-* can send the file via link to email
+* upload into a selected pool
+* can send the files via link to email
 * set expire date
 
 ## Configuration
-### Server
-* URL                           : (string) company main liquidefile url.
-* Token                         : (string) must be at this construction "Basic XXX", the XXX must be token in 64base
+#### Server
+* Liquid server         : (string) company main liquidefile url.
+* Token Base64          : (string) must be at this construction "Basic XXX", (XXX token number)
+* Pool name             : (string) if you like to upload the file in to specific pool
 
-### Configure
-* Expire Gap                    : (number postive/negative) mandatory, set the gap in day.
-*    
+#### Configure
+* Expire gap            : (number postive/negative) mandatory, set the gap in day.
+* Upload folder         : (string) mandatory, folder from witch you want to upload files
+* Download Permmision   : (Boolean) set the paramete if the file is for specific usesr or open to every one
+* Grouped mail          : (Boolean) determin if to send all links in one mail or mail for each file
+* Require Auth          : (boolean) determin if the client need to login for downloading.
+* Delete Source         : (boolean) Set the parameter if you need to delete the file from the folder.
 
-### Client
-* email                         : (string) optional. client email, witch should get the file.
-* subject                       : (string) optional. email subject.
-* body                          : (string) optional. email body.
+#### Client
+* Target email          : (string) optional. client email, witch should get the file.
+* Email subject         : (string) optional. email subject.
+* Email body            : (string) optional. email body.

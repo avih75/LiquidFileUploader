@@ -41,15 +41,15 @@
     }, {
         "name": "token",
         "type": "string",
-        "label": "your token",
+        "label": "Token in Base64 (converter - https://www.base64encode.org/)",
         "defaultValue": "",
         "required": true,
-        "helpMarkDown": "a base64 token for your liquidefile server - use a secret",
+        "helpMarkDown": "a base64 token for your liquidefile server (BASIC ************) - use a secret",
         "groupName": "Server"
     }, {
         "name": "days",
         "type": "string",
-        "label": "expire in days",
+        "label": "Expire gap",
         "defaultValue": "",
         "required": true,
         "helpMarkDown": "a days number for your liquidefile server as expire gap",
@@ -57,7 +57,7 @@
     }, {
         "name": "folder",
         "type": "string",
-        "label": "folder to upload",
+        "label": "Upload folder",
         "defaultValue": "",
         "required": true,
         "helpMarkDown": "the folder that contains the files to upload to your liquidefile server",
@@ -65,7 +65,7 @@
     }, {
         "name": "private",
         "type": "pickList",
-        "label": "permmision to download",
+        "label": "Download Permmision",
         "required": true,
         "helpMarkDown": "appliese permmision dowload parameter to your liquidefile server",
         "defaultValue": "0",
@@ -78,23 +78,15 @@
     }, {
         "name": "pool",
         "type": "string",
-        "label": "pool name",
+        "label": "Pool name",
         "defaultValue": "",
         "required": true,
         "helpMarkDown": "pool id in liquidfile witch the files will be add to",
         "groupName": "Server"
     }, {
-        "name": "emails",
-        "type": "string",
-        "label": "client emails",
-        "defaultValue": "",
-        "required": false,
-        "helpMarkDown": "email witch the server send the download links to",
-        "groupName": "Client"
-    }, {
         "name": "email",
         "type": "string",
-        "label": "client email",
+        "label": "Target email",
         "defaultValue": "",
         "required": false,
         "helpMarkDown": "email witch the server send the download links to",
@@ -102,7 +94,7 @@
     }, {
         "name": "subject",
         "type": "string",
-        "label": "email subject",
+        "label": "Email subject",
         "defaultValue": "",
         "required": false,
         "helpMarkDown": "email subject",
@@ -110,19 +102,35 @@
     }, {
         "name": "body",
         "type": "string",
-        "label": "email body",
+        "label": "Email body",
         "defaultValue": "",
         "required": false,
         "helpMarkDown": "email body",
         "groupName": "Client"
     }, {
+        "name": "group",
+        "type": "boolean",
+        "label": "Grouped mail",
+        "defaultValue": false,
+        "required": true,
+        "helpMarkDown": "Groups all files in folder into one mail.",
+        "groupName": "Client"
+    }, {
+        "name": "dell",
+        "type": "boolean",
+        "label": "Delete Source",
+        "defaultValue": false,
+        "required": true,
+        "helpMarkDown": "if you want to delete the files from the folder.",
+        "groupName": "Cofiguration"
+    }, {
         "name": "auth",
         "type": "boolean",
-        "label": "Auth to download",
+        "label": "Require Auth",
         "defaultValue": false,
         "required": true,
         "helpMarkDown": "if he need to Authenticate befor downloading.",
-        "groupName": "Client"
+        "groupName": "Cofiguration"
     }],
     "execution": {
         "Node10": {
