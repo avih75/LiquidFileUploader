@@ -1,8 +1,17 @@
 import fs = require("fs");
+import util = require("util");
 import { delay } from "q";
 import request = require("request");
 
 let Model: LiquidFileUploader;
+const readFile = util.promisify(fs.createReadStream);
+const postFilee = util.promisify(request);
+function getStuff(path: string) {
+    return readFile(path, undefined);
+}
+function pushStuff(options: any) {
+    return postFilee(options);
+}
 export class LiquidFileUploader {
     public readonly InputPool: string;
     public readonly InputUrl: string;
@@ -118,10 +127,10 @@ export class LiquidFileUploader {
 }
 export function UploadTheFiles() {
     console.log("Look in to: " + Model.InputFolder + " folder");
-    fs.readdir(Model.InputFolder, (err: any, filenames: string[]) => {
+    fs.readdir(Model.InputFolder, async (err: any, filenames: string[]) => {
         if (filenames) {
             console.log("fonded: " + filenames);
-            PostFiles(filenames);
+            await PostFiles2(filenames);
         }
         else {
             Model.AddMessage("empty folder \n");
@@ -130,32 +139,25 @@ export function UploadTheFiles() {
 }
 async function PostFiles(filenames: string[]) {
     let attachments: Array<string> = new Array<string>();
-    let counter:number=0;
+    let counter: number = 0;
     filenames.forEach(async function (fileName: string) {
-        console.log("work on file: " + Model.InputFolder+"\\"+fileName);
-        const readStream = fs.createReadStream(Model.InputFolder+"\\" + fileName);
+        console.log("work on file: " + Model.InputFolder + "\\" + fileName);
+        const readStream = fs.createReadStream(Model.InputFolder + "\\" + fileName);
         console.log("file content: " + readStream);
-        //let fileBuffer: Buffer = Buffer.from(Model.InputFolder + fileName);
-        //let fileBuffer: Buffer = Buffer.from(readStream);         
         console.log("try upload");
-        let attachmentId: string = await PostFile(readStream, fileName);
-        console.log("attachment: "+attachmentId);
-        if (attachmentId != ""){
-            attachments.push(attachmentId);
-        }
+        PostFile(readStream, fileName, attachments);
         console.log("file uploaded");
         counter++;
     });
-    let temp:number=counter;
-    while(counter<filenames.length){
-        if (counter!=temp)
-        {
-            temp=counter;
-            console.log("total uploaded: "+temp);
+    let x = 0;
+    while (counter > attachments.length) {
+        while (attachments.length > x) {
+            console.log("uploaded: " + x + " of total: " + counter);
+            x++;
         }
         await delay(1000);
     }
-    console.log("attachments: "+attachments.length);
+    console.log("Total uploaded: " + attachments.length);
     if (attachments.length > 0 && Model.InputEmail != "") {
         console.log("sending mail to: " + Model.InputEmail);
         console.log("subject: " + Model.InputSubject);
@@ -163,7 +165,7 @@ async function PostFiles(filenames: string[]) {
         if (Model.GroupedFiles) {
             SendMail(attachments);
         }
-        else { 
+        else {
             attachments.forEach(attach => {
                 let attachment: Array<string> = new Array<string>();
                 attachment.push(attach);
@@ -172,7 +174,7 @@ async function PostFiles(filenames: string[]) {
         }
     }
 }
-async function PostFile(fileBuffer: fs.ReadStream, fileName: string) {
+function PostFile(fileBuffer: fs.ReadStream, fileName: string, attachments: Array<string>) {
     console.log("try post file " + fileName + " to: " + Model.InputUrl + " pool: " + Model.InputPool + " token: " + Model.InputToken);
     try {
         const options = {
@@ -201,16 +203,11 @@ async function PostFile(fileBuffer: fs.ReadStream, fileName: string) {
             else {
                 console.log("Attachment Id: " + response.body);
                 x = response.body;
+                attachments.push(x);
                 if (Model.InputDell)
                     DeleteFiles(fileName);
             }
         });
-        while (x == ".") {
-            await delay(2000);
-            console.log("waiting for upload to be done.." + x);
-        }
-        console.log("out of the request " + x);
-        return x;
     } catch (err) {
         Model.AddMessage("faile to upload \n");
         console.log("error: " + err);
@@ -246,8 +243,8 @@ function SendMail(attachments: Array<string>) {
             console.log("respone off Mail: " + resp.body);
     });
 }
-function DeleteFiles(filename: string) {     
-        console.log("Deleting file: " + filename);     
+function DeleteFiles(filename: string) {
+    console.log("Deleting file: " + filename);
 }
 function GetList() {
     // get list of all pools and files in cluded - in case we need to get files
@@ -268,4 +265,72 @@ function GetList() {
             console.log("error: " + error);
         }
     });
-} 
+}
+async function PostFiles2(filenames: string[]) {
+    let attachments: Array<string> = new Array<string>();
+    let counter = 0;
+    for (let index = 0; index < filenames.length; index++) {
+        const fileName = filenames[index];
+        console.log("work on file: " + Model.InputFolder + "\\" + fileName); 
+        const readStream = fs.readFileSync(Model.InputFolder + "\\" + fileName);
+        counter++;
+        console.log("files readed: " + counter);
+        let attachment = await PostFile2(fileName, readStream);
+        console.log("file uploaded: " + attachment);
+        attachments.push(attachment);
+    } 
+    console.log("Total uploaded: " + attachments.length);
+    if (attachments.length > 0 && Model.InputEmail != "") {
+        console.log("sending mail to: " + Model.InputEmail);
+        console.log("subject: " + Model.InputSubject);
+        console.log("body: " + Model.InputBody);
+        if (Model.GroupedFiles) {
+            SendMail(attachments);
+        }
+        else {
+            attachments.forEach(attach => {
+                let attachment: Array<string> = new Array<string>();
+                attachment.push(attach);
+                SendMail(attachment);
+            });
+        }
+    }
+}
+async function PostFile2(fileName: string, fileBuffer: unknown) {
+    let attachment = "";
+    console.log("try post file " + fileName + " to: " + Model.InputUrl + " pool: " + Model.InputPool + " token: " + Model.InputToken);
+    try {
+        const options = {
+            'method': 'POST',
+            'url': Model.InputUrl + "/attachments",
+            'headers': {
+                "Authorization": Model.InputToken
+            },
+            formData: {
+                'pool_id': Model.InputPool,
+                '': {
+                    "value": fileBuffer,
+                    'options': {
+                        'filename': fileName,
+                        'contentType': 'multipart/form-data'
+                    }
+                }
+            }
+        };
+        let x = await pushStuff(options);
+        if (x.statusCode == 200) {
+            console.log("Attachment Id: " + x.body);
+            attachment = x.body;
+            if (Model.InputDell)
+                DeleteFiles(fileName);
+        }
+        else {
+            console.log("got an error: " + x.statusCode);
+        }
+        return attachment;
+    } catch (err) {
+        Model.AddMessage("faile to upload \n");
+        console.log("error: " + err);
+        return ""
+    }
+}

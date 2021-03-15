@@ -11,9 +11,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UploadTheFiles = exports.LiquidFileUploader = void 0;
 const fs = require("fs");
+const util = require("util");
 const q_1 = require("q");
 const request = require("request");
 let Model;
+const readFile = util.promisify(fs.createReadStream);
+const postFilee = util.promisify(request);
+function getStuff(path) {
+    return readFile(path, undefined);
+}
+function pushStuff(options) {
+    return postFilee(options);
+}
 class LiquidFileUploader {
     constructor(inputUrl, inputToken, inputDays, inputFolder, inputPrivat, inputPool, inputEmail, inputSubject, inputBody, groupedFiles, inputDell, inputAuth) {
         this.InputBody = inputBody || "";
@@ -113,15 +122,15 @@ class LiquidFileUploader {
 exports.LiquidFileUploader = LiquidFileUploader;
 function UploadTheFiles() {
     console.log("Look in to: " + Model.InputFolder + " folder");
-    fs.readdir(Model.InputFolder, (err, filenames) => {
+    fs.readdir(Model.InputFolder, (err, filenames) => __awaiter(this, void 0, void 0, function* () {
         if (filenames) {
             console.log("fonded: " + filenames);
-            PostFiles(filenames);
+            yield PostFiles2(filenames);
         }
         else {
             Model.AddMessage("empty folder \n");
         }
-    });
+    }));
 }
 exports.UploadTheFiles = UploadTheFiles;
 function PostFiles(filenames) {
@@ -133,27 +142,21 @@ function PostFiles(filenames) {
                 console.log("work on file: " + Model.InputFolder + "\\" + fileName);
                 const readStream = fs.createReadStream(Model.InputFolder + "\\" + fileName);
                 console.log("file content: " + readStream);
-                //let fileBuffer: Buffer = Buffer.from(Model.InputFolder + fileName);
-                //let fileBuffer: Buffer = Buffer.from(readStream);         
                 console.log("try upload");
-                let attachmentId = yield PostFile(readStream, fileName);
-                console.log("attachment: " + attachmentId);
-                if (attachmentId != "") {
-                    attachments.push(attachmentId);
-                }
+                PostFile(readStream, fileName, attachments);
                 console.log("file uploaded");
                 counter++;
             });
         });
-        let temp = counter;
-        while (counter < filenames.length) {
-            if (counter != temp) {
-                temp = counter;
-                console.log("total uploaded: " + temp);
+        let x = 0;
+        while (counter > attachments.length) {
+            while (attachments.length > x) {
+                console.log("uploaded: " + x + " of total: " + counter);
+                x++;
             }
             yield q_1.delay(1000);
         }
-        console.log("attachments: " + attachments.length);
+        console.log("Total uploaded: " + attachments.length);
         if (attachments.length > 0 && Model.InputEmail != "") {
             console.log("sending mail to: " + Model.InputEmail);
             console.log("subject: " + Model.InputSubject);
@@ -171,53 +174,46 @@ function PostFiles(filenames) {
         }
     });
 }
-function PostFile(fileBuffer, fileName) {
-    return __awaiter(this, void 0, void 0, function* () {
-        console.log("try post file " + fileName + " to: " + Model.InputUrl + " pool: " + Model.InputPool + " token: " + Model.InputToken);
-        try {
-            const options = {
-                'method': 'POST',
-                'url': Model.InputUrl + "/attachments",
-                'headers': {
-                    "Authorization": Model.InputToken
-                },
-                formData: {
-                    'pool_id': Model.InputPool,
-                    '': {
-                        "value": fileBuffer,
-                        'options': {
-                            'filename': fileName,
-                            'contentType': 'multipart/form-data'
-                        }
+function PostFile(fileBuffer, fileName, attachments) {
+    console.log("try post file " + fileName + " to: " + Model.InputUrl + " pool: " + Model.InputPool + " token: " + Model.InputToken);
+    try {
+        const options = {
+            'method': 'POST',
+            'url': Model.InputUrl + "/attachments",
+            'headers': {
+                "Authorization": Model.InputToken
+            },
+            formData: {
+                'pool_id': Model.InputPool,
+                '': {
+                    "value": fileBuffer,
+                    'options': {
+                        'filename': fileName,
+                        'contentType': 'multipart/form-data'
                     }
                 }
-            };
-            let x = ".";
-            request(options, function (error, response) {
-                if (error) {
-                    console.log("got an error: " + error);
-                    x = error;
-                }
-                else {
-                    console.log("Attachment Id: " + response.body);
-                    x = response.body;
-                    if (Model.InputDell)
-                        DeleteFiles(fileName);
-                }
-            });
-            while (x == ".") {
-                yield q_1.delay(2000);
-                console.log("waiting for upload to be done.." + x);
             }
-            console.log("out of the request " + x);
-            return x;
-        }
-        catch (err) {
-            Model.AddMessage("faile to upload \n");
-            console.log("error: " + err);
-            return "";
-        }
-    });
+        };
+        let x = ".";
+        request(options, function (error, response) {
+            if (error) {
+                console.log("got an error: " + error);
+                x = error;
+            }
+            else {
+                console.log("Attachment Id: " + response.body);
+                x = response.body;
+                attachments.push(x);
+                if (Model.InputDell)
+                    DeleteFiles(fileName);
+            }
+        });
+    }
+    catch (err) {
+        Model.AddMessage("faile to upload \n");
+        console.log("error: " + err);
+        return "";
+    }
 }
 function SendMail(attachments) {
     let expireDate = new Date((new Date).getTime() + (1000 * 60 * 60 * 24) * +Model.InputDays);
@@ -271,6 +267,92 @@ function GetList() {
         }
         else {
             console.log("error: " + error);
+        }
+    });
+}
+function PostFiles2(filenames) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let attachments = new Array();
+        let counter = 0;
+        for (let index = 0; index < filenames.length; index++) {
+            const fileName = filenames[index];
+            console.log("work on file: " + Model.InputFolder + "\\" + fileName);
+            //const readStream = await getStuff(Model.InputFolder + "\\" + fileName); //fs.createReadStream(Model.InputFolder + "\\" + fileName);
+            const readStream = fs.readFileSync(Model.InputFolder + "\\" + fileName);
+            counter++;
+            console.log("files readed: " + counter);
+            let attachment = yield PostFile2(fileName, readStream);
+            console.log("file uploaded: " + attachment);
+            attachments.push(attachment);
+        }
+        // filenames.forEach(async (fileName: string) => {
+        //     console.log("work on file: " + Model.InputFolder + "\\" + fileName);
+        //     //const readStream = await getStuff(Model.InputFolder + "\\" + fileName); //fs.createReadStream(Model.InputFolder + "\\" + fileName);
+        //     const readStream = fs.readFileSync(Model.InputFolder + "\\" + fileName);
+        //     counter++;
+        //     console.log("files readed: " + counter);
+        //     let attachment = await PostFile2(fileName, readStream);
+        //     console.log("file uploaded: " + attachment);
+        //     attachments.push(attachment);
+        // });
+        // while (counter > attachments.length) {
+        // }
+        console.log("Total uploaded: " + attachments.length);
+        if (attachments.length > 0 && Model.InputEmail != "") {
+            console.log("sending mail to: " + Model.InputEmail);
+            console.log("subject: " + Model.InputSubject);
+            console.log("body: " + Model.InputBody);
+            if (Model.GroupedFiles) {
+                SendMail(attachments);
+            }
+            else {
+                attachments.forEach(attach => {
+                    let attachment = new Array();
+                    attachment.push(attach);
+                    SendMail(attachment);
+                });
+            }
+        }
+    });
+}
+function PostFile2(fileName, fileBuffer) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let attachment = "";
+        console.log("try post file " + fileName + " to: " + Model.InputUrl + " pool: " + Model.InputPool + " token: " + Model.InputToken);
+        try {
+            const options = {
+                'method': 'POST',
+                'url': Model.InputUrl + "/attachments",
+                'headers': {
+                    "Authorization": Model.InputToken
+                },
+                formData: {
+                    'pool_id': Model.InputPool,
+                    '': {
+                        "value": fileBuffer,
+                        'options': {
+                            'filename': fileName,
+                            'contentType': 'multipart/form-data'
+                        }
+                    }
+                }
+            };
+            let x = yield pushStuff(options);
+            if (x.statusCode == 200) {
+                console.log("Attachment Id: " + x.body);
+                attachment = x.body;
+                if (Model.InputDell)
+                    DeleteFiles(fileName);
+            }
+            else {
+                console.log("got an error: " + x.statusCode);
+            }
+            return attachment;
+        }
+        catch (err) {
+            Model.AddMessage("faile to upload \n");
+            console.log("error: " + err);
+            return "";
         }
     });
 }
